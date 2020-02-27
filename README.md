@@ -1,10 +1,11 @@
-# flask-base 
-[![Circle CI](https://circleci.com/gh/hack4impact/flask-base.svg?style=svg)](https://circleci.com/gh/hack4impact/flask-base) [![Stories in Ready](https://badge.waffle.io/hack4impact/flask-base.png?label=ready&title=Ready)](https://waffle.io/hack4impact/flask-base) 
-[![Code Climate](https://codeclimate.com/github/hack4impact/flask-base/badges/gpa.svg)](https://codeclimate.com/github/hack4impact/flask-base/coverage) 
+# flask-base
+[![Circle CI](https://circleci.com/gh/hack4impact/flask-base.svg?style=svg)](https://circleci.com/gh/hack4impact/flask-base) 
+[![Code Climate](https://codeclimate.com/github/hack4impact/flask-base/badges/gpa.svg)](https://codeclimate.com/github/hack4impact/flask-base/coverage)
 [![Issue Count](https://codeclimate.com/github/hack4impact/flask-base/badges/issue_count.svg)](https://codeclimate.com/github/hack4impact/flask-base) ![python3.x](https://img.shields.io/badge/python-3.x-brightgreen.svg)  ![python2.x](https://img.shields.io/badge/python-2.x-yellow.svg)
-<img src="readme_media/logo@2x.png" width="400"/>
 
-A Flask application template with the boilerplate code already done for you. 
+![flask-base](readme_media/logo.png)
+
+A Flask application template with the boilerplate code already done for you.
 
 
 **Documentation available at [http://hack4impact.github.io/flask-base](http://hack4impact.github.io/flask-base).**
@@ -19,14 +20,14 @@ A Flask application template with the boilerplate code already done for you.
 * Flask-Mail for sending emails
 * gzip compression
 * Redis Queue for handling asynchronous tasks
-* ZXCVBN password strength checker  
+* ZXCVBN password strength checker
 * CKEditor for editing pages
 
 ## Demos
 
 Home Page:
 
-![home](readme_media/home.gif "home") 
+![home](readme_media/home.gif "home")
 
 Registering User:
 
@@ -34,7 +35,7 @@ Registering User:
 
 Admin Editing Page:
 
-![edit page](readme_media/editpage.gif "editpage") 
+![edit page](readme_media/editpage.gif "editpage")
 
 Admin Editing Users:
 
@@ -43,57 +44,77 @@ Admin Editing Users:
 
 ## Setting up
 
-##### Clone the repo
+##### Create your own repository from this Template
+
+Navigate to the [main project page](https://github.com/hack4impact/flask-base) and click the big, green "Use this template" button at the top right of the page. Give your new repository a name and save it.
+
+##### Clone the repository 
 
 ```
-$ git clone https://github.com/hack4impact/flask-base.git
-$ cd flask-base
+$ git clone https://github.com/YOUR_USERNAME/REPO_NAME.git
+$ cd REPO_NAME
 ```
 
-##### Initialize a virtualenv
+##### Initialize a virtual environment
 
+Windows:
 ```
-$ pip install virtualenv
-$ virtualenv -p /path/to/python3.x/installation env
-$ source env/bin/activate
+$ python3 -m venv venv
+$ venv\Scripts\activate.bat
 ```
 
-For mac users it will most likely be
+Unix/MacOS:
 ```
-$ pip install virtualenv
-$ virtualenv -p python3 env
-$ source env/bin/activate
+$ python3 -m venv venv
+$ source venv/bin/activate
 ```
-Note: if you are using a python2.x version, point the -p value towards your python2.x path
+Learn more in [the documentation](https://docs.python.org/3/library/venv.html#creating-virtual-environments).
 
-##### (If you're on a mac) Make sure xcode tools are installed
+Note: if you are using a python before 3.3, it doesn't come with venv. Install [virtualenv](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv) with pip instead.
+
+##### (If you're on a Mac) Make sure xcode tools are installed
 
 ```
 $ xcode-select --install
 ```
 
-##### Add Environment Variables 
+##### Add Environment Variables
 
-Create a file called `config.env` that contains environment variables in the following syntax: `ENVIRONMENT_VARIABLE=value`. For example,
-the mailing environment variables can be set as the following. We recommend using Sendgrid for a mailing SMTP server. But anything else will work as well.
+Create a file called `config.env` that contains environment variables. **Very important: do not include the `config.env` file in any commits. This should remain private.** You will manually maintain this file locally, and keep it in sync on your host.
 
-```
-MAIL_USERNAME=SendgridUsername
-MAIL_PASSWORD=SendgridPassword
-SECRET_KEY=SuperRandomStringToBeUsedForEncryption
-```
+Variables declared in file have the following format: `ENVIRONMENT_VARIABLE=value`. You may also wrap values in double quotes like `ENVIRONMENT_VARIABLE="value with spaces"`.
 
-Other Key value pairs:
+1. In order for Flask to run, there must be a `SECRET_KEY` variable declared. Generating one is simple with Python 3:
 
-* `ADMIN_EMAIL`: set to the default email for your first admin account (default is `flask-base-admin@example.com`)
-* `ADMIN_PASSWORD`: set to the default password for your first admin account (default is `password`)
-* `DATABASE_URL`: set to a postgresql database url (default is `data-dev.sqlite`)
-* `REDISTOGO_URL`: set to Redis To Go URL or any redis server url (default is `http://localhost:6379`)
-* `RAYGUN_APIKEY`: api key for raygun (default is `None`)
-* `FLASK_CONFIG`: can be `development`, `production`, `default`, `heroku`, `unix`, or `testing`. Most of the time you will use `development` or `production`. 
+   ```
+   $ python3 -c "import secrets; print(secrets.token_hex(16))"
+   ```
 
+   This will give you a 32-character string. Copy this string and add it to your `config.env`:
 
-**Note: do not include the `config.env` file in any commits. This should remain private.**
+   ```
+   SECRET_KEY=Generated_Random_String
+   ```
+
+2. The mailing environment variables can be set as the following.
+   We recommend using [Sendgrid](https://sendgrid.com) for a mailing SMTP server, but anything else will work as well.
+
+   ```
+   MAIL_USERNAME=SendgridUsername
+   MAIL_PASSWORD=SendgridPassword
+   ```
+
+Other useful variables include:
+
+| Variable        | Default   | Discussion  |
+| --------------- |-------------| -----|
+| `ADMIN_EMAIL`   | `flask-base-admin@example.com` | email for your first admin account |
+| `ADMIN_PASSWORD`| `password`                     | password for your first admin account |
+| `DATABASE_URL`  | `data-dev.sqlite`              | Database URL. Can be Postgres, sqlite, etc. |
+| `REDISTOGO_URL` | `http://localhost:6379`        | [Redis To Go](https://redistogo.com) URL or any redis server url |
+| `RAYGUN_APIKEY` | `None`                         | API key for [Raygun](https://raygun.com/raygun-providers/python), a crash and performance monitoring service |
+| `FLASK_CONFIG`  | `default`                      | can be `development`, `production`, `default`, `heroku`, `unix`, or `testing`. Most of the time you will use `development` or `production`. |
+
 
 ##### Install the dependencies
 
@@ -165,7 +186,7 @@ $ python manage.py add_fake_data
 
 ```
 $ source env/bin/activate
-$ honcho start -f Local
+$ honcho start -e config.env -f Local
 ```
 
 For Windows users having issues with binding to a redis port locally, refer to [this issue](https://github.com/hack4impact/flask-base/issues/132).
@@ -177,13 +198,13 @@ Before you submit changes to flask-base, you may want to autoformat your code wi
 
 ## Contributing
 
-Contributions are welcome! Check out our [Waffle board](https://waffle.io/hack4impact/flask-base) which automatically syncs with this project's GitHub issues. Please refer to our [Code of Conduct](./CONDUCT.md) for more information.
+Contributions are welcome! Please refer to our [Code of Conduct](./CONDUCT.md) for more information.
 
 ## Documentation Changes
 
-To make changes to the documentation refer to the [Mkdocs documentation](http://www.mkdocs.org/#installation) for setup. 
+To make changes to the documentation refer to the [Mkdocs documentation](http://www.mkdocs.org/#installation) for setup.
 
-To create a new documentation page, add a file to the `docs/` directory and edit `mkdocs.yml` to reference the file. 
+To create a new documentation page, add a file to the `docs/` directory and edit `mkdocs.yml` to reference the file.
 
 When the new files are merged into `master` and pushed to github. Run `mkdocs gh-deploy` to update the online documentation.
 

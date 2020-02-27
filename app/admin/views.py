@@ -1,14 +1,27 @@
-from flask import abort, flash, redirect, render_template, url_for, request
+from flask import (
+    Blueprint,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user, login_required
 from flask_rq import get_queue
 
-from .forms import (ChangeAccountTypeForm, ChangeUserEmailForm, InviteUserForm,
-                    NewUserForm)
-from . import admin
-from .. import db
-from ..decorators import admin_required
-from ..email import send_email
-from ..models import Role, User, EditableHTML
+from app import db
+from app.admin.forms import (
+    ChangeAccountTypeForm,
+    ChangeUserEmailForm,
+    InviteUserForm,
+    NewUserForm,
+)
+from app.decorators import admin_required
+from app.email import send_email
+from app.models import EditableHTML, Role, User
+
+admin = Blueprint('admin', __name__)
 
 
 @admin.route('/')
@@ -65,7 +78,8 @@ def invite_user():
             subject='You Are Invited To Join',
             template='account/email/invite',
             user=user,
-            invite_link=invite_link, )
+            invite_link=invite_link,
+        )
         flash('User {} successfully invited'.format(user.full_name()),
               'form-success')
     return render_template('admin/new_user.html', form=form)
@@ -107,8 +121,8 @@ def change_user_email(user_id):
         user.email = form.email.data
         db.session.add(user)
         db.session.commit()
-        flash('Email for user {} successfully changed to {}.'
-              .format(user.full_name(), user.email), 'form-success')
+        flash('Email for user {} successfully changed to {}.'.format(
+            user.full_name(), user.email), 'form-success')
     return render_template('admin/manage_user.html', user=user, form=form)
 
 
@@ -131,8 +145,8 @@ def change_account_type(user_id):
         user.role = form.role.data
         db.session.add(user)
         db.session.commit()
-        flash('Role for user {} successfully changed to {}.'
-              .format(user.full_name(), user.role.name), 'form-success')
+        flash('Role for user {} successfully changed to {}.'.format(
+            user.full_name(), user.role.name), 'form-success')
     return render_template('admin/manage_user.html', user=user, form=form)
 
 
